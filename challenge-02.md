@@ -1,4 +1,4 @@
-# KodeKloud CKS Chalenge 02
+# KodeKloud CKS Challenge 02
 
 ![challenge-2](https://user-images.githubusercontent.com/19620378/237099063-d63d5ff8-0c54-4ccd-916f-34abcbf8d85c.png)
 
@@ -94,7 +94,7 @@ Afterwards, it is required build the image
 
 The fixed is straightforward, it is required to remove the `CapSysAdmin` capability from the container and set `AllowPrivilegeEscalation` to `false`
 
-Here is the updated pod definetion. 
+Here is the updated pod definition. 
 *Note that the container image has been updated to `kodekloud/webapp-color:stable`*
 
 ```yaml
@@ -183,13 +183,13 @@ Now it is safe to redeploy the pod.
   }
 ]
 ```
-Same as the dev-webapp, `kubsec` has flagged two concerns here
+Same as the dev-webapp, `kubesec` has flagged two concerns here
 1.  `CapSysAdmin` 
 2. `AllowPrivilegeEscalation`
 
 The fixed is trivial, it is required to remove the `CapSysAdmin` capability from the container and set `AllowPrivilegeEscalation` to `false`
 
-Here is the updated pod definetion. 
+Here is the updated pod definition. 
 Note that the container image has been updated to `kodekloud/webapp-color:stable`
 ```yaml
   apiVersion: v1
@@ -254,7 +254,7 @@ Here, there are two binaries to be deleted during the pod startup,
 1. `sh`
 2. `ash`
 
-To acheive that during the pod startup, following configurations should be included to the both pods (`staging-webapp` and `dev-webapp`)
+To achieve that during the pod startup, following configurations should be included to the both pods (`staging-webapp` and `dev-webapp`)
 ```yaml
 startupProbe:
   exec:
@@ -345,7 +345,7 @@ There are a couple of things should be highlighted,
 - the ports, which should be supposed to server the traffics.
 	- 8080
 	- 3036 
-- and the whitlisted namespace, which is `prod`
+- and the whitelisted namespace, which is `prod`
 
 So first it is required see the existing labels attached to the `prod` namespace
 ```sh
@@ -354,7 +354,7 @@ So first it is required see the existing labels attached to the `prod` namespace
   prod   Active   64m   kubernetes.io/metadata.name=prod
 ```
 
-Since all the data required to create the NetworPolicy in hand, let create the policy.
+Since all the data required to create the NetworkPolicy in hand, let create the policy.
 
 ```yaml
   apiVersion: networking.k8s.io/v1

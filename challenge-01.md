@@ -1,8 +1,8 @@
-# KodeKloud CKS Chalenge 01
+# KodeKloud CKS Challenge 01
 
 ![CKS-01](https://user-images.githubusercontent.com/19620378/236825493-83f4bbec-9d74-4c4a-8273-e5e85a6f50b2.png)
 
-## Scaning with Trivy 
+## Scanning with Trivy  
 
 __Trivy__ uses advanced scanning technology such as vulnerability databases, security advisories, and Common Vulnerability Scoring System (CVSS) to identify potential security vulnerabilities on a range of targets. 
 It is capable of scanning a wide variety of targets, including container images, makes it a versatile and comprehensive security tool.
@@ -27,7 +27,7 @@ Here to set the AppArmor profile to be used in the `alpha-xyz` deployment you ca
   cat usr.sbin.nginx
   # Then copy it to the default directory
   cp usr.sbin.nginx /etc/apparmor.d/usr.sbin.nginx
-  # set the app-armor profile and veriofy it is loaded
+  # set the app-armor profile and verify it is loaded
   apparmor_parser /etc/apparmor.d/usr.sbin.nginx
   apparmor_status
  ```
@@ -91,7 +91,7 @@ Hence, the PVC definition needs to be updated.
     phase: Pending
 ```
 
-Then, the pvc should be replaced with the new definetion
+Then, the pvc should be replaced with the new definition
 
 ```sh
   k replace -f alpha-pvc.yaml --force
@@ -162,9 +162,9 @@ Here, there are two services to expose the `alpha-xyz` deployment
 
 ## Network Policies
 
-The network policy is straightforward, only need to consider the ingress trafic to the `alpha-xyz` deployment
+The network policy is straightforward, only need to consider the ingress traffic to the `alpha-xyz` deployment
 
-First, get the lables from  the `middleware` pod, so it can be used as in the
+First, get the labels from  the `middleware` pod, so it can be used as in the
 ```yaml
   # REDACTED
   ingress:

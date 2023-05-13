@@ -4,7 +4,7 @@
 
 
 ## Before begin
-I did complete the changellenge only in my second attempt. The given cluster is bit old, and unlike previous two challnges, you have to deal with extra one node.
+The given cluster is bit old, and unlike previous two challenges, you have to deal with extra one node.
 
 First, let see if all the nodes(control and worker) are in `Ready` status
 ```sh
@@ -22,7 +22,7 @@ As the both the nodes are healthy, let see what is the current version of the cl
   Server Version: version.Info{Major:"1", Minor:"23", GitVersion:"v1.23.0", ...}
 ```
 
-At the time I write this document, the current Kuberentes version 1.27, so we shall be mindful on this when we refering to the official kubenetes docs.
+At the time I write this document, the current Kubernetes version 1.27, so we shall be mindful on this when we referring to the official Kubernetes docs.
 
 ## Kube-bench
 
@@ -38,16 +38,16 @@ Let download and install kube-bench on both the nodes. following steps should be
   curl -L https://github.com/aquasecurity/kube-bench/releases/download/v0.6.2/kube-bench_0.6.2_linux_amd64.tar.gz -o kube-bench_0.6.2_linux_amd64.tar.gz
   tar -xvf kube-bench_0.6.2_linux_amd64.tar.gz
 
-  # Create the directory for kube-bench output flie
+  # Create the directory for kube-bench output file
   mkdir -p /var/www/html/
 ```
 
 ### Control plane
 
-Runing `kube-bench` in control plane node is straightforward,
+Running `kube-bench` in control plane node is straightforward,
 
 ```sh
-  # Assumig the working directory is /opt
+  # Assuming the working directory is /opt
   ./kube-bench run -D cfg/ --config cfg/config.yaml > /var/www/html/index.html
 
   # Verify the content
@@ -62,7 +62,7 @@ First, lets ssh in to the node,
   ssh node01
 ```
 
-__As the wroker-node dosen't have have kubeconfig file set__, like the controlplane node that we ussually associate with kubectl command, we can use the `kublet`'s config file. 
+__As the worker-node doesn't have have kubeconfig file set__, like the controlplane node that we usually associate with kubectl command, we can use the `kubelet`'s config file. 
 
 So here we pass the kubeconfig file as an environment variable,
 
@@ -73,9 +73,9 @@ KUBECONFIG=/etc/kubernetes/kubelet.conf ./kube-bench run -D cfg/ --config cfg/co
 head  /var/www/html/index.html
 ```
 
-## Remediations
+## Remediation
 
-Kube bench has falged a couple of failed checks that needs to be fixed.
+Kube bench has flagged a couple of failed checks that needs to be fixed.
 
 ### Kubelet
 
@@ -92,22 +92,23 @@ According to the `kube-bench` suggestions, Kubelet configuration should be updat
   systemctl restart kubelet.service
 ```
 
-The configuration is straighforward, but we might need to update this on both the nodes.
+The configuration is straightforward, but we might need to update this on both the nodes.
 
 Set the following in `/var/lib/kubelet/config.yaml `
 
 ```yaml
 protectKernelDefaults: true # 4.2.6 Ensure that the --protect-kernel-defaults argument is set to true
 ```
+
 Above should be set on kubelet in both the nodes.
 
-### Scheduler and Contoller-Manager
+### Scheduler and Controller-Manager
 
-On both Scheduler and Contoller-Manager, which are kubernetes conrolplane components, we might need to set `--profiling=false`. This can be done using static manifest file in the contolplande node.  
+On both Scheduler and Controller-Manager, which are kubernetes controlplane components, we might need to set `--profiling=false`. This can be done using static manifest file in the controlplane node.  
 
 Respective manifest files are
 1. Scheduler: `/etc/kubernetes/manifests/kube-scheduler.yaml`
-2. Contoller-Manager: `/etc/kubernetes/manifests/kube-controller-manager.yaml`
+2. Controller-Manager: `/etc/kubernetes/manifests/kube-controller-manager.yaml`
 
 ### ETCD
 
@@ -123,22 +124,22 @@ To fix the flagged issue on ETCD,
 ```
 
 
-### API Server
+### Kube API-Server
 
-There a couple update to be done to the kube-apierver manifest, hense, we might backup the manifest file first.
+There a couple update to be done to the `kube-apiserver` manifest, hence, we might backup the manifest file first.
 
 ```sh
   cp /etc/kubernetes/manifests/kube-apiserver.yaml  /root/kube-apiserver.yaml.backup 
 ```
 
-Afterwards lets provission a directoty to store audit log files from `PodSecurityPolicy` admission controller plugin.
+Afterwards lets provision a directory to store audit log files from `PodSecurityPolicy` admission controller plugin.
 
 ```sh
   mkdir -p /var/log/apiserver
 ```
 
 Before updating the parameters, for kube-apiserver, I would update the volume configuration, so we can identify a misconfiguration quickly. 
-To mount the provissioned directory for audit logs, append the `volumes` and `volumeMounts`
+To mount the provisioned directory for audit logs, append the `volumes` and `volumeMounts`
 
 ```yaml
   volumeMounts:
@@ -182,7 +183,7 @@ Now, lets update the api-server parameters,
       # REDACTED
       
 ```
-Once the `kube-apiserver` is ready, all the flaged issues should be fixed.
+Once the `kube-apiserver` is ready, all the flagged issues should be fixed.
 
 *Note that `[FAIL] 1.2.6 Ensure that the --kubelet-certificate-authority argument is set as appropriate (Automated)` is considered out of the scope for this challenge.*
 
