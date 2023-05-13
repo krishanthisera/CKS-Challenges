@@ -21,24 +21,24 @@ Then it is required to update the Dockerfile. Following changes are done
   ```Dockerfile
   FROM python:3.6-alpine
   
-## Install Flask
-RUN pip install flask
+  ## Install Flask
+  RUN pip install flask
 
-## Copy All files to /opt
-COPY app/ /opt/
+  ## Copy All files to /opt
+  COPY app/ /opt/
 
-## Flask app to be exposed on port 8080
-EXPOSE 8080
+  ## Flask app to be exposed on port 8080
+  EXPOSE 8080
 
-## Flask app to be run as 'worker'
-RUN adduser -D worker
+  ## Flask app to be run as 'worker'
+  RUN adduser -D worker
 
 
-WORKDIR /opt
+  WORKDIR /opt
 
-USER worker
+  USER worker
 
-ENTRYPOINT ["python", "app.py"]
+  ENTRYPOINT ["python", "app.py"]
   ```
 
 Afterwards, it is required build the image
@@ -98,29 +98,29 @@ Here is the updated pod definetion.
 *Note that the container image has been updated to `kodekloud/webapp-color:stable`*
 
 ```yaml
-apiVersion: v1
-kind: Pod
-metadata:
-  labels:
+  apiVersion: v1
+  kind: Pod
+  metadata:
+    labels:
+      name: dev-webapp
     name: dev-webapp
-  name: dev-webapp
-  namespace: dev
-spec:
-  containers:
-  - env:
-    - name: APP_COLOR
-      value: darkblue
-    image: kodekloud/webapp-color:stable
-    imagePullPolicy: Never
-    name: webapp-color
-    resources: {}
-    securityContext:
-      runAsUser: 0
-      allowPrivilegeEscalation: false
-      capabilities:
-        add:
-        - NET_ADMIN
-      # REDACTED
+    namespace: dev
+  spec:
+    containers:
+    - env:
+      - name: APP_COLOR
+        value: darkblue
+      image: kodekloud/webapp-color:stable
+      imagePullPolicy: Never
+      name: webapp-color
+      resources: {}
+      securityContext:
+        runAsUser: 0
+        allowPrivilegeEscalation: false
+        capabilities:
+          add:
+          - NET_ADMIN
+        # REDACTED
 ```
 
 Now, lets re run the `kubesec scan` to see if the issues has been fixed
@@ -192,29 +192,29 @@ The fixed is trivial, it is required to remove the `CapSysAdmin` capability from
 Here is the updated pod definetion. 
 Note that the container image has been updated to `kodekloud/webapp-color:stable`
 ```yaml
-apiVersion: v1
-kind: Pod
-metadata:
-  labels:
+  apiVersion: v1
+  kind: Pod
+  metadata:
+    labels:
+      name: staging-webapp
     name: staging-webapp
-  name: staging-webapp
-  namespace: staging
-spec:
-  containers:
-  - env:
-    - name: APP_COLOR
-      value: pink
-    image: kodekloud/webapp-color:stable
-    imagePullPolicy: Never
-    name: webapp-color
-    resources: {}
-    securityContext:
-      allowPrivilegeEscalation: false
-      runAsUser: 0
-      capabilities:
-        add:
-        - NET_ADMIN
-    # REDACTED
+    namespace: staging
+  spec:
+    containers:
+    - env:
+      - name: APP_COLOR
+        value: pink
+      image: kodekloud/webapp-color:stable
+      imagePullPolicy: Never
+      name: webapp-color
+      resources: {}
+      securityContext:
+        allowPrivilegeEscalation: false
+        runAsUser: 0
+        capabilities:
+          add:
+          - NET_ADMIN
+      # REDACTED
 ```
 Now, lets re run the `kubesec scan` to see if the issues has been fixed
 ```sh
@@ -280,25 +280,25 @@ First, lets grab the environment variables from the deployment
 	 k get deployments.apps -n prod  -o yaml
 ```
 *Note that it could use `jsonpath` to grab those environment variable* [see](https://kubernetes.io/docs/reference/kubectl/jsonpath/) 
- ```yaml     
- apiVersion: apps/v1
- kind: Deployment
- # REDACTED
- spec:
-   # REDACTED
-   template:
-     metadata:
-       # REDACTED
-     spec:
-       containers:
-       - env:
-         - name: DB_Host
-           value: prod-db
-         - name: DB_User
-           value: root
-         - name: DB_Password
-           value: paswrd
-         # REDACTED
+```yaml     
+  apiVersion: apps/v1
+  kind: Deployment
+  # REDACTED
+  spec:
+    # REDACTED
+    template:
+      metadata:
+        # REDACTED
+      spec:
+        containers:
+        - env:
+          - name: DB_Host
+            value: prod-db
+          - name: DB_User
+            value: root
+          - name: DB_Password
+            value: paswrd
+          # REDACTED
   ```
   
  Now lets create the secret with the above values,
@@ -311,28 +311,28 @@ First, lets grab the environment variables from the deployment
 ```
 Now lets update the deployments to refer to the environment variable from the `prod-db` secret
 
-  ```yaml
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  # REDACTED
-spec:
-  # REDACTED
-  template:
-      # REDACTED
-    spec:
-      containers:
-      - envFrom:
-          - secretRef:
-              name: prod-db
-        name: test-secret
-        image: mmumshad/simple-webapp-mysql
-        imagePullPolicy: Always
-        name: webapp-mysql
-        ports:
-        - containerPort: 8080
-          protocol: TCP
+```yaml
+  apiVersion: apps/v1
+  kind: Deployment
+  metadata:
+    # REDACTED
+  spec:
+    # REDACTED
+    template:
         # REDACTED
+      spec:
+        containers:
+        - envFrom:
+            - secretRef:
+                name: prod-db
+          name: test-secret
+          image: mmumshad/simple-webapp-mysql
+          imagePullPolicy: Always
+          name: webapp-mysql
+          ports:
+          - containerPort: 8080
+            protocol: TCP
+          # REDACTED
   ```
 
 ## NetworkPolicy 
@@ -349,31 +349,32 @@ There are a couple of things should be highlighted,
 
 So first it is required see the existing labels attached to the `prod` namespace
 ```sh
- k get ns prod --show-labels 
-NAME   STATUS   AGE   LABELS
-prod   Active   64m   kubernetes.io/metadata.name=prod
-``
+  k get ns prod --show-labels 
+  NAME   STATUS   AGE   LABELS
+  prod   Active   64m   kubernetes.io/metadata.name=prod
+```
 
 Since all the data required to create the NetworPolicy in hand, let create the policy.
+
 ```yaml
-apiVersion: networking.k8s.io/v1
-kind: NetworkPolicy
-metadata:
-  name: prod-netpol
-  namespace: prod
-spec:
-  podSelector: {}
-  ingress:
-  - from:
-        - namespaceSelector:
-            matchLabels:
-              kubernetes.io/metadata.name: prod
-  policyTypes:
-  - Ingress
-      - protocol: TCP
-        port: 3306          
-      - protocol: TCP
-        port: 8080
+  apiVersion: networking.k8s.io/v1
+  kind: NetworkPolicy
+  metadata:
+    name: prod-netpol
+    namespace: prod
+  spec:
+    podSelector: {}
+    ingress:
+    - from:
+          - namespaceSelector:
+              matchLabels:
+                kubernetes.io/metadata.name: prod
+    policyTypes:
+    - Ingress
+        - protocol: TCP
+          port: 3306          
+        - protocol: TCP
+          port: 8080
  ```
  
  

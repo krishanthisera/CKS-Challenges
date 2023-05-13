@@ -23,13 +23,13 @@ __AppArmor__ is a Linux security module that restricts an application's access t
 Here to set the AppArmor profile to be used in the `alpha-xyz` deployment you can follow,
 
 ```sh
-    # Inspect the app-armor profile to see if the profile name is correct
-    cat usr.sbin.nginx
-    # Then copy it to the default directory
-    cp usr.sbin.nginx /etc/apparmor.d/usr.sbin.nginx
-    # set the app-armor profile and veriofy it is loaded
-    apparmor_parser /etc/apparmor.d/usr.sbin.nginx
-    apparmor_status
+  # Inspect the app-armor profile to see if the profile name is correct
+  cat usr.sbin.nginx
+  # Then copy it to the default directory
+  cp usr.sbin.nginx /etc/apparmor.d/usr.sbin.nginx
+  # set the app-armor profile and veriofy it is loaded
+  apparmor_parser /etc/apparmor.d/usr.sbin.nginx
+  apparmor_status
  ```
 
 ## Troubleshooting the PersistentVolumeClaim (PVC)
@@ -37,13 +37,13 @@ Here to set the AppArmor profile to be used in the `alpha-xyz` deployment you ca
 Let's investigate the PersistentVolumeClaim, which have been created.
 
 ```sh
-    k get pvc alpha-pvc -o wide
+  k get pvc alpha-pvc -o wide
 ```
 
 The PVC is not being bounded to the PersistanceVolume (PV), lets investigate further why.
 
 ```sh
-    k get pvc alpha-pvc -o yaml
+  k get pvc alpha-pvc -o yaml
 ```
 
 The issue is obvious that the `accessModes` is not match with the Persistance Volume. 
@@ -109,38 +109,38 @@ Here there are a couple things to be updated
 Following is the completed manifest for the deployment
 
   ```yaml
-      apiVersion: apps/v1
-      kind: Deployment
+  apiVersion: apps/v1
+  kind: Deployment
+  metadata:
+    creationTimestamp: null
+    labels:
+      app: alpha-xyz
+    name: alpha-xyz
+    namespace: alpha
+  spec:
+    replicas: 1
+    selector:
+      matchLabels:
+        app: alpha-xyz
+    strategy: {}
+    template:
       metadata:
         creationTimestamp: null
+        annotations:
+          container.apparmor.security.beta.kubernetes.io/nginx: localhost/custom-nginx
         labels:
           app: alpha-xyz
-        name: alpha-xyz
-        namespace: alpha
       spec:
-        replicas: 1
-        selector:
-          matchLabels:
-            app: alpha-xyz
-        strategy: {}
-        template:
-          metadata:
-            creationTimestamp: null
-            annotations:
-              container.apparmor.security.beta.kubernetes.io/nginx: localhost/custom-nginx
-            labels:
-              app: alpha-xyz
-          spec:
-            volumes:
-            - name: data-volume
-              persistentVolumeClaim:
-                claimName: alpha-pvc
-            containers:
-            - image: nginx:alpine
-              name: nginx
-              volumeMounts:
-              - mountPath: "/usr/share/nginx/html"
-                name: data-volume
+        volumes:
+        - name: data-volume
+          persistentVolumeClaim:
+            claimName: alpha-pvc
+        containers:
+        - image: nginx:alpine
+          name: nginx
+          volumeMounts:
+          - mountPath: "/usr/share/nginx/html"
+            name: data-volume
   ```
 Then the `alpha-xyz` can be deployed
 
@@ -154,10 +154,10 @@ Here, there are two services to expose the `alpha-xyz` deployment
 2. A ClusterIP service name `alpha-svc`
 
 ```sh
-     # ClusterIP Service
-     k expose deployment alpha-xyz --port=80 --target-port=80 --name alpha-svc
-     # NodePort Service
-     k expose deployment alpha-xyz --type NodePort --port=80
+  # ClusterIP Service
+  k expose deployment alpha-xyz --port=80 --target-port=80 --name alpha-svc
+  # NodePort Service
+  k expose deployment alpha-xyz --type NodePort --port=80
 ```
 
 ## Network Policies
