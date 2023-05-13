@@ -28,10 +28,10 @@ You can find the URLs to our solutions for each of the four challenges below:
 
 | Challenge | Solution URL |
 |-----------|--------------|
-| Challenge 1 | [Link to Challenge 1 Solution](./challenge-01/) |
-| Challenge 2 | [Link to Challenge 2 Solution](./challenge-02/) |
-| Challenge 3 | [Link to Challenge 3 Solution](./challenge-03/) |
-| Challenge 4 | [Link to Challenge 4 Solution](./challenge-04/) |
+| Challenge 1 | [Link to Challenge 1 Solution](./challenge-01) |
+| Challenge 2 | [Link to Challenge 2 Solution](./challenge-02) |
+| Challenge 3 | [Link to Challenge 3 Solution](./challenge-03) |
+| Challenge 4 | [Link to Challenge 4 Solution](./challenge-04) |
 
 [kodekloud.com]: https://kodekloud.com/courses/certified-kubernetes-security-specialist-cks/
 [KodeKloud-CKS-Challenge]: https://kodekloud.com/courses/cks-challenges/
