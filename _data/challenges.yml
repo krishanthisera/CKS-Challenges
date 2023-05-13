@@ -1,0 +1,12 @@
+- title: Challenge 01
+  url: /challenge-01/
+  description: "Challenge 01: Focused on Trivy and AppArmor"
+- title: Challenge 0
+  url: /challenge-02/
+  description: "Challenge 02: Focused on securing Docker image and kubernetes manifests"
+- title: Challenge 03
+  url: /challenge-03/
+  description: "Challenge 03: Focused on kube-bench and CIS benchmark"
+- title: Challenge 04
+  url: /challenge-04/
+  description: "This challenge challenges you on Kubernetes security concepts like pod security policies and network security."
