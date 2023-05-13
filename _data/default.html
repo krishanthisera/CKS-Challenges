@@ -1,8 +1,0 @@
-<div class="sidebar">
-    <h3>Challenges</h3>
-    <ul>
-      {% for challenge in site.data.challenges %}
-        <li {% if page.url == challenge.url %}class="active"{% endif %}><a href="{{ challenge.url }}">{{ challenge.title }}</a></li>
-      {% endfor %}
-    </ul>
-  </div>
