@@ -4,7 +4,7 @@
 
 ## Securing the Docker image
 
-Creating the asserts directory to be used during the image build
+Lets create the asserts directory to be used during the image build
 
 ```shell
 cd webapp/
@@ -12,11 +12,11 @@ mkdir app
 mv -f app.py requirements.txt templates app/
 ```
 
-Then it is required to update the Dockerfile. Following changes are done
+Then it is required to update the Dockerfile with following changes
 
-1. removed the port 22 as it is not required
+1. remove the port 22 as it is not required
 2. change the source directory in the `COPY` command
-3. set the `user`
+3. set correct `user`
 
  See the updated Dockerfile
 
@@ -35,7 +35,6 @@ EXPOSE 8080
 ## Flask app to be run as 'worker'
 RUN adduser -D worker
 
-
 WORKDIR /opt
 
 USER worker
@@ -48,19 +47,19 @@ Afterwards, it is required build the image
 ```shell
  # Build the docker image
  docker build -t kodekloud/webapp-color:stable .
- # Some smoke testing
+ # Smoke testing
  docker run -dt kodekloud/webapp-color:stable
 ```
 
 ## Securing the Kubernetes manifest files
   
-Lets run the `kubesec` on both the manifest files to see if there are any critical concerns,
+Lets run the `kubesec` on both the manifest files, to see if there are any critical concerns,
   
 ## dev-webapp
 
 ```shell
- kubesec scan /root/dev-webapp.yaml
- ```
+kubesec scan /root/dev-webapp.yaml
+```
 
 ```json
 [
@@ -97,9 +96,9 @@ Lets run the `kubesec` on both the manifest files to see if there are any critic
 1. `CapSysAdmin`
 2. `AllowPrivilegeEscalation`
 
-The fixed is straightforward, it is required to remove the `CapSysAdmin` capability from the container and set `AllowPrivilegeEscalation` to `false`
+The fixes are straightforward, it is required to remove the `CapSysAdmin` capability from the container and set `AllowPrivilegeEscalation` to `false`
 
-Here is the updated pod definition.
+Here is the updated pod definition.  
 *Note that the container image has been updated to `kodekloud/webapp-color:stable`*
 
 ```yaml
@@ -195,8 +194,8 @@ Same as the dev-webapp, `kubesec` has flagged two concerns here
 
 The fixed is trivial, it is required to remove the `CapSysAdmin` capability from the container and set `AllowPrivilegeEscalation` to `false`
 
-Here is the updated pod definition.
-Note that the container image has been updated to `kodekloud/webapp-color:stable`
+Here is the updated pod definition.  
+*Note that the container image has been updated to `kodekloud/webapp-color:stable`*
 
 ```yaml
 apiVersion: v1
@@ -295,7 +294,7 @@ First, lets grab the environment variables from the deployment
 k get deployments.apps -n prod  -o yaml
 ```
 
-*Note that it could use `jsonpath` to grab those environment variable* [see](https://kubernetes.io/docs/reference/kubectl/jsonpath/)
+*Note that you can try using `jsonpath` to grab those environment variable* [see](https://kubernetes.io/docs/reference/kubectl/jsonpath/).
 
 ```yaml
 apiVersion: apps/v1
@@ -358,7 +357,7 @@ spec:
 
 There are a couple of things should be highlighted,
 
-- the policy type, which `ingress`  
+- the policy type, which is `ingress`  
 - as this policy should be applied to all the pods in the namespace,
   - `podSelector: {}`
 - the ports, which should be supposed to server the traffics.  
@@ -366,7 +365,7 @@ There are a couple of things should be highlighted,
   - 3036  
 - and the whitelisted namespace, which is `prod`
 
-So first it is required see the existing labels attached to the `prod` namespace
+So first, lets see what are the existing labels attached to `prod` namespace.
 
 ```shell
 k get ns prod --show-labels 
@@ -374,7 +373,7 @@ NAME   STATUS   AGE   LABELS
 prod   Active   64m   kubernetes.io/metadata.name=prod
 ```
 
-Since all the data required to create the NetworkPolicy in hand, let create the policy.
+Since all the data required to create the NetworkPolicy is in hand, lets create the NetworkPolicy file, and get it created.
 
 ```yaml
 apiVersion: networking.k8s.io/v1

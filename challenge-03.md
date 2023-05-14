@@ -31,7 +31,7 @@ At the time I write this document, the current Kubernetes version 1.27, so we sh
 
 ### Install  
 
-Let download and install kube-bench on both the nodes. following steps should be perform on both the nodes,
+Lets download and install kube-bench on both the nodes. following steps should be perform on both the nodes,
 
 ```shell
 # CD in to the /opt directory
@@ -63,7 +63,7 @@ First, lets ssh in to the node,
 ssh node01
 ```
 
-__As the worker-node doesn't have have kubeconfig file set__, like the controlplane node that we usually associate with kubectl command, we can use the `kubelet`'s config file.
+__As the worker-node doesn't have a kubeconfig file set__, like the controlplane node that we usually associate with kubectl command, we can use the `kubelet`'s config file.
 
 So here we pass the kubeconfig file as an environment variable,
 
@@ -76,7 +76,7 @@ head  /var/www/html/index.html
 
 ## Remediation
 
-Kube bench has flagged a couple of failed checks that needs to be fixed.
+`kube-bench` has flagged a couple of failed checks that needs to be fixed.
 
 ### Kubelet
 
@@ -101,7 +101,7 @@ Set the following in `/var/lib/kubelet/config.yaml`
 protectKernelDefaults: true # 4.2.6 Ensure that the --protect-kernel-defaults argument is set to true
 ```
 
-Above should be set on kubelet in both the nodes.
+Above should be set on both the nodes.
 
 ### Scheduler and Controller-Manager
 
@@ -128,26 +128,26 @@ chown etcd:etcd /var/lib/etcd
 
 ### Kube API-Server
 
-There a couple update to be done to the `kube-apiserver` manifest, hence, we might backup the manifest file first.
+There are a couple updates to be done to the `kube-apiserver` manifest, hence, we might backup the manifest file first.
 
 ```shell
 cp /etc/kubernetes/manifests/kube-apiserver.yaml  /root/kube-apiserver.yaml.backup 
 ```
 
-Afterwards lets provision a directory to store audit log files from `PodSecurityPolicy` admission controller plugin.
+Afterwards, lets provision a directory to store audit log files from `PodSecurityPolicy` admission controller plugin.
 
 ```shell
 mkdir -p /var/log/apiserver
 ```
 
-Before updating the parameters, for kube-apiserver, I would update the volume configuration, so we can identify a misconfiguration quickly.
+Before updating the parameters for kube-apiserver, I would update the volume configuration, so we can identify a misconfiguration quickly.
 To mount the provisioned directory for audit logs, append the `volumes` and `volumeMounts`
 
 ```yaml
-volumeMounts:
-# REDACTED
-  - mountPath: /var/log/apiserver
-    name: audit-logs
+  volumeMounts:
+  # REDACTED
+    - mountPath: /var/log/apiserver
+      name: audit-logs
 # REDACTED
 volumes:
 - hostPath:
@@ -157,14 +157,15 @@ volumes:
   ...
 ```
 
- Save the config and restart the kubelet if required.
+ Save the configuration and restart the kubelet if required.
 
 ```shell
 systemctl restart kubelet
+# To see if the API server is ready
 watch crictl ps -a
 ```
 
-Now, lets update the api-server parameters,
+Now, lets update the `kube-apiserver` parameters,
 
 ```yaml
 apiVersion: v1s

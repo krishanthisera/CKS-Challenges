@@ -4,9 +4,9 @@
 
 This challenge focused on how to analysis/audit suspicious behaviors using, using Falco and Kubernetes auditing.
 
-Please note that the grading system has not picked the installed version of Falco, hence the Task is marked as incomplete.
+*Please note that the grading system has not picked the installed version of Falco, hence the Task is marked as incomplete.*
 
-According to the Falco documentations, there have been recent change to the systemd unit names. See [here](https://falco.org/docs/getting-started/installation/#falco-packages)
+According to the Falco documentations, there have been recent change to the systemd unit names. See [here](https://falco.org/docs/getting-started/installation/#falco-packages).
 
 ## Install and configure Falco
 
@@ -47,9 +47,9 @@ sudo apt install -y dialog
 sudo apt-get install -y falco
 ```
 
-The driver I have associated in this scenario is `kmod`, and I have enabled the automatic rule-sets update.
+The driver, I have associated in this scenario is `kmod`, and I have enabled the automatic rule-sets update.
 
-See [here](https://falco.org/docs/getting-started/installation/#installation-details) for complete installation guide.
+See [here](https://falco.org/docs/getting-started/installation/#installation-details) for the complete installation guide.
 
 Once installed, we can list Falco systemd services as below
 
@@ -66,7 +66,7 @@ file_output:
   filename: /opt/falco.log
 ```
 
-Once done we can restart the falco service,
+Once done, we can restart the falco service,
 
 ```shell
 systemctl restart falco
@@ -84,7 +84,7 @@ root@controlplane ~ ➜  tail /opt/falco.log
 
 ## Configure Kubernetes Auditing
 
-Though the following statement is a bit vague for me when I first read it, we can get the gist of it.
+Though the following statement is a bit vague to me when I was read it for the first time, we can get the gist of it.
 
 *Create a single rule in the audit policy that will record events for the 'two' objects depicting abnormal behaviour in the 'citadel' namespace.
 This rule should however be applied to all 'three' namespaces shown in the diagram at a 'metadata' level. Omit the 'RequestReceived' stage.*
@@ -116,7 +116,7 @@ rules:
     namespaces: ["omega", "citadel", "eden-prime"]
 ```
 
-Now before we started to change the API server configuration, lets provision a directory for the Audit logs.
+Before we started to change the API server configuration, lets provision a directory for the Audit logs.
 
 ```shell
 mkdir -p /var/log/kubernetes/audit/
@@ -171,7 +171,7 @@ status: {}
 
 ## Monitoring
 
-As we both the Kubernetes auditing Falco monitoring has been set up, we can investigate the suspicious behaviours.
+As both the Kubernetes auditing and Falco monitoring has been set up, we can investigate the suspicious behaviours.
 
 ### Kubernetes Audit logs
 
@@ -229,10 +229,10 @@ tail /var/log/kubernetes/audit/audit.log | jq
 
 The first clue to solve this (at least to me) was above recurring event, which explain why the `webapp-color` pod keep changing.
 
-So the culprit was `agent-smith`, let delete both the role and role-binding, which allow this user to perform this.
+So the culprit is `agent-smith`, lets delete both the role and role-binding, which allow this user to perform this.
 
 ```shell
-# Find the role and role-binding
+# To get the role and role-binding
 root@controlplane ~ ➜  k get rolebindings.rbac.authorization.k8s.io  -o wide -n citadel
 NAME                              ROLE                                AGE   USERS          GROUPS   SERVICEACCOUNTS
 dev1                              Role/dev1                           50m   dev-user                
@@ -265,9 +265,9 @@ root@controlplane ~ ➜  tail /opt/falco.log
 04:53:46.659625483: Error Package management process launched in container (user=root user_loginuid=-1 command=apt install nginx pid=32016 container_id=8bfd921f6a90 container_name=k8s_eden-software2_eden-software2_eden-prime_c62cd7c1-37c2-47cc-88d6-cbf4434f480b_0 image=ubuntu:latest)
 ```
 
-here the culprit is a container belongs to a pod in `eden-prime` namespace, so we simply have to terminate the pods.
+Here, the culprit is a container belongs to a pod in `eden-prime` namespace, so we have to terminate the pods.
 
-so the container name, according to the above log `container_name=k8s_eden-software2_eden-software2`
+The container name, according to the above logs is `container_name=k8s_eden-software2_eden-software2`
 
 To terminate the specific pod
 
@@ -277,7 +277,7 @@ k delete pod eden-software2 -n eden-prime
 
 ### Additional tasks
 
-To finalise the task, lets dump the objects that a suspicious as requested by the task.
+To finalise the task, lets dump the objects that are suspicious as requested by the task.
 
 ```shell
 # Roles and RoleBinding
