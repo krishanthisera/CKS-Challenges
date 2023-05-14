@@ -21,7 +21,7 @@ The installation is straightforward, here I have used `Kmod` as the preferred pl
 
 ### Installation
 
-Following installation steps are directly copied from the official falco documentation, it is recommended to refer to the documentation, if you wish to install Falco in your system.
+Following installation steps are directly copied from the official Falco documentation, it is recommended to refer to the documentation, if you wish to install Falco in your system.
 
 ```shell
 # Trust the falcosecurity GPG key
@@ -233,7 +233,7 @@ So the culprit is `agent-smith`, lets delete both the role and role-binding, whi
 
 ```shell
 # To get the role and role-binding
-root@controlplane ~ ➜  k get rolebindings.rbac.authorization.k8s.io  -o wide -n citadel
+root@controlplane ~ ➜  kubectl get rolebindings.rbac.authorization.k8s.io  -o wide -n citadel
 NAME                              ROLE                                AGE   USERS          GROUPS   SERVICEACCOUNTS
 dev1                              Role/dev1                           50m   dev-user                
 important_binding_do_not_delete   Role/important_role_do_not_delete   50m   agent-smith             
@@ -242,9 +242,9 @@ important_citadel_user_binding    Role/important_citadel_user_role    50m   cita
 
 ```shell
 # Delete the role
-k delete role important_role_do_not_delete  -n citadel
+kubectl delete role important_role_do_not_delete  -n citadel
 # Delete the role-binding
-k delete rolebindings.rbac.authorization.k8s.io important_binding_do_not_delete  -n citadel
+kubectl delete rolebindings.rbac.authorization.k8s.io important_binding_do_not_delete  -n citadel
 ```
 
 ### Falco events
@@ -272,7 +272,7 @@ The container name, according to the above logs is `container_name=k8s_eden-soft
 To terminate the specific pod
 
 ```shell
-k delete pod eden-software2 -n eden-prime
+kubectl delete pod eden-software2 -n eden-prime
 ```
 
 ### Additional tasks

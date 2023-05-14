@@ -148,7 +148,7 @@ Now, lets re run the `kubesec scan` to see if the issues has been fixed
 Now it is safe to redeploy the pod.
 
 ```shell
-k replace -f /root/dev-webapp.yaml --force
+kubectl replace -f /root/dev-webapp.yaml --force
 ```
 
 ## staging-webapp
@@ -255,7 +255,7 @@ kubesec scan /root/staging-webapp.yaml
 Now it is safe to redeploy the pod.
 
 ```shell
-k replace -f /root/dev-webapp.yaml --force
+kubectl replace -f /root/dev-webapp.yaml --force
 ```
 
 ## Removing the shell(s) from the container
@@ -282,8 +282,8 @@ startupProbe:
 Once both the manifests are updated, lets deploy the pods,
 
 ```shell
-k replace -f /root/dev-webapp.yaml --force
-k replace -f /root/staging-webapp.yaml --force
+kubectl replace -f /root/dev-webapp.yaml --force
+kubectl replace -f /root/staging-webapp.yaml --force
 ```
 
 ## Using Kubernetes secrets as environments variable
@@ -291,7 +291,7 @@ k replace -f /root/staging-webapp.yaml --force
 First, lets grab the environment variables from the deployment
 
 ```shell
-k get deployments.apps -n prod  -o yaml
+kubectl get deployments.apps -n prod  -o yaml
 ```
 
 *Note that you can try using `jsonpath` to grab those environment variable* [see](https://kubernetes.io/docs/reference/kubectl/jsonpath/).
@@ -320,7 +320,7 @@ spec:
  Now lets create the secret with the above values,
 
 ```shell
-k create secret generic prod-db \
+kubectl create secret generic prod-db \
 --from-literal DB_Host=prod-db \
 --from-literal DB_User=root \
 --from-literal DB_Password=paswrd \
@@ -368,7 +368,7 @@ There are a couple of things should be highlighted,
 So first, lets see what are the existing labels attached to `prod` namespace.
 
 ```shell
-k get ns prod --show-labels 
+kubectl get ns prod --show-labels 
 NAME   STATUS   AGE   LABELS
 prod   Active   64m   kubernetes.io/metadata.name=prod
 ```

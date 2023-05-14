@@ -37,13 +37,13 @@ apparmor_status
 Let's investigate the PersistentVolumeClaim, which have been created.
 
 ```shell
-k get pvc alpha-pvc -o wide
+kubectl get pvc alpha-pvc -o wide
 ```
 
 The PVC is not being bounded to the PersistanceVolume (PV), lets investigate further why.
 
 ```shell
-k get pvc alpha-pvc -o yaml
+kubectl get pvc alpha-pvc -o yaml
 ```
 
 The issue is obvious that the `accessModes` is not match with the Persistance Volume.
@@ -60,7 +60,7 @@ Hence, the PVC definition needs to be updated.
 
 ```shell
 # Grab the manifest for PVC
-k get pvc alpha-pvc -o yaml > alpha-pvc.yaml
+kubectl get pvc alpha-pvc -o yaml > alpha-pvc.yaml
 ```
 
 ### Updated PVC
@@ -94,9 +94,9 @@ status:
 Then, the PVC should be replaced with the new definition
 
 ```shell
-k replace -f alpha-pvc.yaml --force
+kubectl replace -f alpha-pvc.yaml --force
 # Ensure the PVC is now bounded to the correct PV
-k get pvc alpha-pvc -o wide
+kubectl get pvc alpha-pvc -o wide
 ```
 
 ## Deployment alpha-xyz
@@ -147,7 +147,7 @@ spec:
 Then the `alpha-xyz` can be deployed
 
 ```shell
-k apply -f /root/alpha-xyz.yaml
+kubectl apply -f /root/alpha-xyz.yaml
 ```
 
 ## Services
@@ -159,9 +159,9 @@ There are two services to be associated with `alpha-xyz` deployment
 
 ```shell
 # ClusterIP Service
-k expose deployment alpha-xyz --port=80 --target-port=80 --name alpha-svc
+kubectl expose deployment alpha-xyz --port=80 --target-port=80 --name alpha-svc
 # NodePort Service
-k expose deployment alpha-xyz --type NodePort --port=80
+kubectl expose deployment alpha-xyz --type NodePort --port=80
 ```
 
 ## Network Policies
@@ -171,7 +171,7 @@ The network policy is straightforward, only need to consider the ingress traffic
 First, get the labels from  the `middleware` pod, so it can be used as in the `podSelector.matchLabels`
 
 ```shell
-    k get pods middleware -o wide --show-labels 
+kubectl get pods middleware -o wide --show-labels 
 ```
 
 Lets create the NetworkPolicy for `alpha-xyz` deployment
@@ -201,7 +201,7 @@ spec:
 Once the  NetworkPolicy get deployed, to verify the policy
 
 ```shell
-k describe networkpolicies.networking.k8s.io
+kubectl describe networkpolicies.networking.k8s.io
 ```
 
 ## Smoke testing
@@ -210,7 +210,7 @@ The connectivity can be tested
 
 ```shell
 # Should be failed
-k exec -it external -- curl alpha-svc
+kubectl exec -it external -- curl alpha-svc
 # Should be success
-k exec -it middleware -- curl alpha-svc
+kubectl exec -it middleware -- curl alpha-svc
 ```

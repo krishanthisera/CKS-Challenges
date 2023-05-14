@@ -29,12 +29,12 @@ In addition, following resources were useful for completing these challenges:
 
 You can find the URLs to our solutions for each of the four challenges below:
 
-| Challenge | Solution                           | Solution URL |
-|-----------|------------------------------------|--------------|
-| Challenge 1 | [challenge-01.md](challenge-01.md) | [Link to Challenge 1 Solution](./challenge-01) |
-| Challenge 2 | [challenge-02.md](challenge-02.md) | [Link to Challenge 2 Solution](./challenge-02) |
-| Challenge 3 | [challenge-03.md](challenge-03.md) | [Link to Challenge 3 Solution](./challenge-03) |
-| Challenge 4 | [challenge-04.md](challenge-04.md) | [Link to Challenge 4 Solution](./challenge-04) |
+| Challenge | Solution                           |
+|-----------|------------------------------------|
+| Challenge 1 | [challenge-01.md](challenge-01.md) |
+| Challenge 2 | [challenge-02.md](challenge-02.md) |
+| Challenge 3 | [challenge-03.md](challenge-03.md) |
+| Challenge 4 | [challenge-04.md](challenge-04.md) |
 
 [kodekloud.com]: https://kodekloud.com/courses/certified-kubernetes-security-specialist-cks/
 [KodeKloud-CKS-Challenge]: https://kodekloud.com/courses/cks-challenges/

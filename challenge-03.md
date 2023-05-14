@@ -9,7 +9,7 @@ The given cluster is bit old, and unlike previous two challenges, you have to de
 First, let see if all the nodes(control and worker) are in `Ready` status
 
 ```shell
-root@controlplane ~ ➜  k get nodes
+root@controlplane ~ ➜  kubectl get nodes
 NAME           STATUS   ROLES                  AGE    VERSION
 controlplane   Ready    control-plane,master   105m   v1.23.0
 node01         Ready    <none>                 104m   v1.23.0
@@ -18,7 +18,7 @@ node01         Ready    <none>                 104m   v1.23.0
 As the both the nodes are healthy, let see what is the current version of the cluster,
 
 ```shell
-root@controlplane ~ ➜  k version 
+root@controlplane ~ ➜  kubectl version 
 Client Version: version.Info{Major:"1", Minor:"23", GitVersion:"v1.23.0", ...}
 Server Version: version.Info{Major:"1", Minor:"23", GitVersion:"v1.23.0", ...}
 ```
