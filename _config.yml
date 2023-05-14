@@ -30,7 +30,7 @@ navbar:
   - title: Challenge 01
     url: /challenge-01/
     description: "Challenge 01: Focused on Trivy and AppArmor"
-  - title: Challenge 0
+  - title: Challenge 02
     url: /challenge-02/
     description: "Challenge 02: Focused on securing Docker image and kubernetes manifests"
   - title: Challenge 03
@@ -47,7 +47,7 @@ sidebar:
       - title: Challenge 01
         url: /challenge-01/
         description: "Challenge 01: Focused on Trivy and AppArmor"
-      - title: Challenge 0
+      - title: Challenge 02
         url: /challenge-02/
         description: "Challenge 02: Focused on securing Docker image and kubernetes manifests"
       - title: Challenge 03
