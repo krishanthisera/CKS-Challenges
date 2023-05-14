@@ -2,64 +2,68 @@
 
 ![challenge_2](images/challenge-02.png)
 
-
 ## Securing the Docker image
+
 Creating the asserts directory to be used during the image build
-```sh
-	cd webapp/
-	mkdir app
-	mv -f app.py requirements.txt templates app/
+
+```shell
+cd webapp/
+mkdir app
+mv -f app.py requirements.txt templates app/
 ```
- 
+
 Then it is required to update the Dockerfile. Following changes are done
+
 1. removed the port 22 as it is not required
 2. change the source directory in the `COPY` command
 3. set the `user`
- 
+
  See the updated Dockerfile
-   
-  ```Dockerfile
-  FROM python:3.6-alpine
-  
-  ## Install Flask
-  RUN pip install flask
 
-  ## Copy All files to /opt
-  COPY app/ /opt/
+```Dockerfile
+FROM python:3.6-alpine
 
-  ## Flask app to be exposed on port 8080
-  EXPOSE 8080
+## Install Flask
+RUN pip install flask
 
-  ## Flask app to be run as 'worker'
-  RUN adduser -D worker
+## Copy All files to /opt
+COPY app/ /opt/
+
+## Flask app to be exposed on port 8080
+EXPOSE 8080
+
+## Flask app to be run as 'worker'
+RUN adduser -D worker
 
 
-  WORKDIR /opt
+WORKDIR /opt
 
-  USER worker
+USER worker
 
-  ENTRYPOINT ["python", "app.py"]
-  ```
+ENTRYPOINT ["python", "app.py"]
+```
 
 Afterwards, it is required build the image
+
 ```sh
-	# Build the docker image
-	docker build -t kodekloud/webapp-color:stable .
-	# Some smoke testing
-	docker run -dt kodekloud/webapp-color:stable
+ # Build the docker image
+ docker build -t kodekloud/webapp-color:stable .
+ # Some smoke testing
+ docker run -dt kodekloud/webapp-color:stable
 ```
 
 ## Securing the Kubernetes manifest files
   
-  Lets run the `kubesec` on both the manifest files to see if there are any critical concerns,
+Lets run the `kubesec` on both the manifest files to see if there are any critical concerns,
   
 ## dev-webapp
 
 ```sh
-	kubesec scan /root/dev-webapp.yaml
-  ```
-  ```JSON
-  [
+ kubesec scan /root/dev-webapp.yaml
+ ```
+
+```JSON
+[
   {
     "object": "Pod/dev-webapp.dev",
     "valid": true,
@@ -89,38 +93,39 @@ Afterwards, it is required build the image
 ```
 
 `kubsec` has flagged two concerns here
-1. `CapSysAdmin` 
+
+1. `CapSysAdmin`
 2. `AllowPrivilegeEscalation`
 
 The fixed is straightforward, it is required to remove the `CapSysAdmin` capability from the container and set `AllowPrivilegeEscalation` to `false`
 
-Here is the updated pod definition. 
+Here is the updated pod definition.
 *Note that the container image has been updated to `kodekloud/webapp-color:stable`*
 
 ```yaml
-  apiVersion: v1
-  kind: Pod
-  metadata:
-    labels:
-      name: dev-webapp
+apiVersion: v1
+kind: Pod
+metadata:
+  labels:
     name: dev-webapp
-    namespace: dev
-  spec:
-    containers:
-    - env:
-      - name: APP_COLOR
-        value: darkblue
-      image: kodekloud/webapp-color:stable
-      imagePullPolicy: Never
-      name: webapp-color
-      resources: {}
-      securityContext:
-        runAsUser: 0
-        allowPrivilegeEscalation: false
-        capabilities:
-          add:
-          - NET_ADMIN
-        # REDACTED
+  name: dev-webapp
+  namespace: dev
+spec:
+  containers:
+  - env:
+    - name: APP_COLOR
+      value: darkblue
+    image: kodekloud/webapp-color:stable
+    imagePullPolicy: Never
+    name: webapp-color
+    resources: {}
+    securityContext:
+      runAsUser: 0
+      allowPrivilegeEscalation: false
+      capabilities:
+        add:
+        - NET_ADMIN
+      # REDACTED
 ```
 
 Now, lets re run the `kubesec scan` to see if the issues has been fixed
@@ -144,18 +149,17 @@ Now, lets re run the `kubesec scan` to see if the issues has been fixed
 Now it is safe to redeploy the pod.
 
 ```sh
-	k replace -f /root/dev-webapp.yaml --force
+k replace -f /root/dev-webapp.yaml --force
 ```
-
 
 ## staging-webapp
 
 ```sh
-	kubesec scan /root/staging-webapp.yaml
+kubesec scan /root/staging-webapp.yaml
 ```
 
-```JSON      
- [
+```JSON
+[
   {
     "object": "Pod/staging-webapp.staging",
     "valid": true,
@@ -183,43 +187,49 @@ Now it is safe to redeploy the pod.
   }
 ]
 ```
+
 Same as the dev-webapp, `kubesec` has flagged two concerns here
-1.  `CapSysAdmin` 
+
+1. `CapSysAdmin`
 2. `AllowPrivilegeEscalation`
 
 The fixed is trivial, it is required to remove the `CapSysAdmin` capability from the container and set `AllowPrivilegeEscalation` to `false`
 
-Here is the updated pod definition. 
+Here is the updated pod definition.
 Note that the container image has been updated to `kodekloud/webapp-color:stable`
+
 ```yaml
-  apiVersion: v1
-  kind: Pod
-  metadata:
-    labels:
-      name: staging-webapp
+apiVersion: v1
+kind: Pod
+metadata:
+  labels:
     name: staging-webapp
-    namespace: staging
-  spec:
-    containers:
-    - env:
-      - name: APP_COLOR
-        value: pink
-      image: kodekloud/webapp-color:stable
-      imagePullPolicy: Never
-      name: webapp-color
-      resources: {}
-      securityContext:
-        allowPrivilegeEscalation: false
-        runAsUser: 0
-        capabilities:
-          add:
-          - NET_ADMIN
-      # REDACTED
+  name: staging-webapp
+  namespace: staging
+spec:
+  containers:
+  - env:
+    - name: APP_COLOR
+      value: pink
+    image: kodekloud/webapp-color:stable
+    imagePullPolicy: Never
+    name: webapp-color
+    resources: {}
+    securityContext:
+      allowPrivilegeEscalation: false
+      runAsUser: 0
+      capabilities:
+        add:
+        - NET_ADMIN
+    # REDACTED
 ```
+
 Now, lets re run the `kubesec scan` to see if the issues has been fixed
+
 ```sh
-	 kubesec scan /root/staging-webapp.yaml
+kubesec scan /root/staging-webapp.yaml
 ```
+
 ```JSON
 [
   {
@@ -244,17 +254,20 @@ Now, lets re run the `kubesec scan` to see if the issues has been fixed
 ```
 
 Now it is safe to redeploy the pod.
+
 ```sh
-	k replace -f /root/dev-webapp.yaml --force
+k replace -f /root/dev-webapp.yaml --force
 ```
 
-##  Removing the shell(s) from the container
+## Removing the shell(s) from the container
 
-Here, there are two binaries to be deleted during the pod startup, 
+Here, there are two binaries to be deleted during the pod startup,
+
 1. `sh`
 2. `ash`
 
 To achieve that during the pod startup, following configurations should be included to the both pods (`staging-webapp` and `dev-webapp`)
+
 ```yaml
 startupProbe:
   exec:
@@ -266,115 +279,120 @@ startupProbe:
   initialDelaySeconds: 5
   periodSeconds: 5
 ```
+
 Once both the manifests are updated, lets deploy the pods,
+
 ```sh
-	k replace -f /root/dev-webapp.yaml --force
-	k replace -f /root/staging-webapp.yaml --force
+k replace -f /root/dev-webapp.yaml --force
+k replace -f /root/staging-webapp.yaml --force
 ```
 
-## Using Kubernetes secrets as environments variable      
+## Using Kubernetes secrets as environments variable
 
 First, lets grab the environment variables from the deployment
 
 ```sh
-	 k get deployments.apps -n prod  -o yaml
+k get deployments.apps -n prod  -o yaml
 ```
-*Note that it could use `jsonpath` to grab those environment variable* [see](https://kubernetes.io/docs/reference/kubectl/jsonpath/) 
-```yaml     
-  apiVersion: apps/v1
-  kind: Deployment
+
+*Note that it could use `jsonpath` to grab those environment variable* [see](https://kubernetes.io/docs/reference/kubectl/jsonpath/)
+
+```yaml
+apiVersion: apps/v1
+kind: Deployment
+# REDACTED
+spec:
   # REDACTED
-  spec:
-    # REDACTED
-    template:
-      metadata:
+  template:
+    metadata:
+      # REDACTED
+    spec:
+      containers:
+      - env:
+        - name: DB_Host
+          value: prod-db
+        - name: DB_User
+          value: root
+        - name: DB_Password
+          value: paswrd
         # REDACTED
-      spec:
-        containers:
-        - env:
-          - name: DB_Host
-            value: prod-db
-          - name: DB_User
-            value: root
-          - name: DB_Password
-            value: paswrd
-          # REDACTED
   ```
   
  Now lets create the secret with the above values,
+
 ```sh
-  k create secret generic prod-db \
-  --from-literal DB_Host=prod-db \
-  --from-literal DB_User=root \
-  --from-literal DB_Password=paswrd \
-  -n prod 
+k create secret generic prod-db \
+--from-literal DB_Host=prod-db \
+--from-literal DB_User=root \
+--from-literal DB_Password=paswrd \
+-n prod 
 ```
+
 Now lets update the deployments to refer to the environment variable from the `prod-db` secret
 
 ```yaml
-  apiVersion: apps/v1
-  kind: Deployment
-  metadata:
-    # REDACTED
-  spec:
-    # REDACTED
-    template:
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  # REDACTED
+spec:
+  # REDACTED
+  template:
+      # REDACTED
+    spec:
+      containers:
+      - envFrom:
+          - secretRef:
+              name: prod-db
+        name: test-secret
+        image: mmumshad/simple-webapp-mysql
+        imagePullPolicy: Always
+        name: webapp-mysql
+        ports:
+        - containerPort: 8080
+          protocol: TCP
         # REDACTED
-      spec:
-        containers:
-        - envFrom:
-            - secretRef:
-                name: prod-db
-          name: test-secret
-          image: mmumshad/simple-webapp-mysql
-          imagePullPolicy: Always
-          name: webapp-mysql
-          ports:
-          - containerPort: 8080
-            protocol: TCP
-          # REDACTED
   ```
 
-## NetworkPolicy 
+## NetworkPolicy
 
 There are a couple of things should be highlighted,
+
 - the policy type, which `ingress`  
-- as this policy should be applied to all the pods in the namespace, 
-	- `podSelector: {}`
-- the traffic
-- the ports, which should be supposed to server the traffics.
-	- 8080
-	- 3036 
+- as this policy should be applied to all the pods in the namespace,
+  - `podSelector: {}`
+- the ports, which should be supposed to server the traffics.  
+  - 8080
+  - 3036  
 - and the whitelisted namespace, which is `prod`
 
 So first it is required see the existing labels attached to the `prod` namespace
+
 ```sh
-  k get ns prod --show-labels 
-  NAME   STATUS   AGE   LABELS
-  prod   Active   64m   kubernetes.io/metadata.name=prod
+k get ns prod --show-labels 
+NAME   STATUS   AGE   LABELS
+prod   Active   64m   kubernetes.io/metadata.name=prod
 ```
 
 Since all the data required to create the NetworkPolicy in hand, let create the policy.
 
 ```yaml
-  apiVersion: networking.k8s.io/v1
-  kind: NetworkPolicy
-  metadata:
-    name: prod-netpol
-    namespace: prod
-  spec:
-    podSelector: {}
-    ingress:
-    - from:
-          - namespaceSelector:
-              matchLabels:
-                kubernetes.io/metadata.name: prod
-    policyTypes:
-    - Ingress
-        - protocol: TCP
-          port: 3306          
-        - protocol: TCP
-          port: 8080
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: prod-netpol
+  namespace: prod
+spec:
+  podSelector: {}
+  ingress:
+  - from:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: prod
+  policyTypes:
+  - Ingress
+      - protocol: TCP
+        port: 3306          
+      - protocol: TCP
+        port: 8080
  ```
- 
- 

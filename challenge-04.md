@@ -10,15 +10,14 @@ According to the Falco documentations, there have been recent change to the syst
 
 ## Install and configure Falco
 
-
-Falco is a software tool that monitors and alerts on activities that involve making system calls in a Linux operating system. 
+Falco is a software tool that monitors and alerts on activities that involve making system calls in a Linux operating system.
 It uses a combination of user space and kernel space modules to monitor and analyze the system calls made by processes on the system.
 
-Falco is capable of identifying specific system calls, arguments, and properties of the calling process, and uses a rules engine to filter and alert on suspicious events. 
-When such events are detected, Falco can be configured to notify various outputs, such as Syslog, files, or Standard Output, so that security teams or system administrators 
+Falco is capable of identifying specific system calls, arguments, and properties of the calling process, and uses a rules engine to filter and alert on suspicious events.
+When such events are detected, Falco can be configured to notify various outputs, such as Syslog, files, or Standard Output, so that security teams or system administrators
 can investigate and take appropriate action.
 
-The installation is straightforward, here I have used `Kmod` as the preferred plugin to install. 
+The installation is straightforward, here I have used `Kmod` as the preferred plugin to install.
 
 ### Installation
 
@@ -56,7 +55,7 @@ Once installed, we can list Falco systemd services as below
 
 ![falco systemd services](images/falco-systemd.png)
 
-Once it is verified that Falco is running, we might need to update it to log the events in `/opt/falco.log`. 
+Once it is verified that Falco is running, we might need to update it to log the events in `/opt/falco.log`.
 
 Following config needs to be updated in `/etc/falco/falco.yaml`
 
@@ -68,6 +67,7 @@ file_output:
 ```
 
 Once done we can restart the falco service,
+
 ```shell
 systemctl restart falco
 ```
@@ -86,14 +86,15 @@ root@controlplane ~ ➜  tail /opt/falco.log
 
 Though the following statement is a bit vague for me when I first read it, we can get the gist of it.
 
-*Create a single rule in the audit policy that will record events for the 'two' objects depicting abnormal behaviour in the 'citadel' namespace. 
+*Create a single rule in the audit policy that will record events for the 'two' objects depicting abnormal behaviour in the 'citadel' namespace.
 This rule should however be applied to all 'three' namespaces shown in the diagram at a 'metadata' level. Omit the 'RequestReceived' stage.*
 
 So if we refer to the objects in `citadel` namespace, it is clear that,
+
 - `configmap` webapp-config-map
 - `pod` webapp-color
 
-are keep replacing. So the two object types that mention above are `configmaps` and `pods`. 
+are keep replacing. So the two object types that mention above are `configmaps` and `pods`.
 
 Secondly, the audit rule should only focus on `omega`, `citadel` and `eden-prime` namespaces in `metadata` level.
 
@@ -226,7 +227,7 @@ tail /var/log/kubernetes/audit/audit.log | jq
 }
 ```
 
-The first clue to solve this (at least to me) was above recurring event, which explain why the `webapp-color` pod keep changing. 
+The first clue to solve this (at least to me) was above recurring event, which explain why the `webapp-color` pod keep changing.
 
 So the culprit was `agent-smith`, let delete both the role and role-binding, which allow this user to perform this.
 
@@ -249,7 +250,6 @@ k delete rolebindings.rbac.authorization.k8s.io important_binding_do_not_delete 
 ### Falco events
 
 Let's investigate Falco events in `/opt/falco.logs`
-
 
 ```shell
 root@controlplane ~ ➜  tail /opt/falco.log 
