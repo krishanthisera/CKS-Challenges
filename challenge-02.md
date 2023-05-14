@@ -45,7 +45,7 @@ ENTRYPOINT ["python", "app.py"]
 
 Afterwards, it is required build the image
 
-```sh
+```shell
  # Build the docker image
  docker build -t kodekloud/webapp-color:stable .
  # Some smoke testing
@@ -58,11 +58,11 @@ Lets run the `kubesec` on both the manifest files to see if there are any critic
   
 ## dev-webapp
 
-```sh
+```shell
  kubesec scan /root/dev-webapp.yaml
  ```
 
-```JSON
+```json
 [
   {
     "object": "Pod/dev-webapp.dev",
@@ -130,7 +130,7 @@ spec:
 
 Now, lets re run the `kubesec scan` to see if the issues has been fixed
 
-```JSON
+```json
 [
   {
     "object": "Pod/dev-webapp.dev",
@@ -148,17 +148,17 @@ Now, lets re run the `kubesec scan` to see if the issues has been fixed
 
 Now it is safe to redeploy the pod.
 
-```sh
+```shell
 k replace -f /root/dev-webapp.yaml --force
 ```
 
 ## staging-webapp
 
-```sh
+```shell
 kubesec scan /root/staging-webapp.yaml
 ```
 
-```JSON
+```json
 [
   {
     "object": "Pod/staging-webapp.staging",
@@ -226,11 +226,11 @@ spec:
 
 Now, lets re run the `kubesec scan` to see if the issues has been fixed
 
-```sh
+```shell
 kubesec scan /root/staging-webapp.yaml
 ```
 
-```JSON
+```json
 [
   {
     "object": "Pod/staging-webapp.staging",
@@ -255,7 +255,7 @@ kubesec scan /root/staging-webapp.yaml
 
 Now it is safe to redeploy the pod.
 
-```sh
+```shell
 k replace -f /root/dev-webapp.yaml --force
 ```
 
@@ -282,7 +282,7 @@ startupProbe:
 
 Once both the manifests are updated, lets deploy the pods,
 
-```sh
+```shell
 k replace -f /root/dev-webapp.yaml --force
 k replace -f /root/staging-webapp.yaml --force
 ```
@@ -291,7 +291,7 @@ k replace -f /root/staging-webapp.yaml --force
 
 First, lets grab the environment variables from the deployment
 
-```sh
+```shell
 k get deployments.apps -n prod  -o yaml
 ```
 
@@ -320,7 +320,7 @@ spec:
   
  Now lets create the secret with the above values,
 
-```sh
+```shell
 k create secret generic prod-db \
 --from-literal DB_Host=prod-db \
 --from-literal DB_User=root \
@@ -352,7 +352,7 @@ spec:
         - containerPort: 8080
           protocol: TCP
         # REDACTED
-  ```
+```
 
 ## NetworkPolicy
 
@@ -368,7 +368,7 @@ There are a couple of things should be highlighted,
 
 So first it is required see the existing labels attached to the `prod` namespace
 
-```sh
+```shell
 k get ns prod --show-labels 
 NAME   STATUS   AGE   LABELS
 prod   Active   64m   kubernetes.io/metadata.name=prod

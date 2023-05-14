@@ -9,7 +9,7 @@ It is capable of scanning a wide variety of targets, including container images,
 
 Here, we shall use a for loop to loop through the list of images, and find the image with least CRITICAL vulnerability.
 
-```sh
+```shell
   for image in nginx:alpine bitnami/nginx nginx:1.13 nginx:1.17 nginx:1.16 nginx:1.14 
     do 
       trivy image -s CRITICAL ${image} 
@@ -22,7 +22,7 @@ __AppArmor__ is a Linux security module that restricts an application's access t
 
 Here to set the AppArmor profile to be used in the `alpha-xyz` deployment you can follow,
 
-```sh
+```shell
 # Inspect the app-armor profile to see if the profile name is correct
 cat usr.sbin.nginx
 # Then copy it to the default directory
@@ -36,13 +36,13 @@ apparmor_status
 
 Let's investigate the PersistentVolumeClaim, which have been created.
 
-```sh
+```shell
 k get pvc alpha-pvc -o wide
 ```
 
 The PVC is not being bounded to the PersistanceVolume (PV), lets investigate further why.
 
-```sh
+```shell
 k get pvc alpha-pvc -o yaml
 ```
 
@@ -58,7 +58,7 @@ spec:
 
 Hence, the PVC definition needs to be updated.
 
-```sh
+```shell
 # Grab the manifest for PVC
 k get pvc alpha-pvc -o yaml > alpha-pvc.yaml
 ```
@@ -93,7 +93,7 @@ status:
 
 Then, the pvc should be replaced with the new definition
 
-```sh
+```shell
 k replace -f alpha-pvc.yaml --force
 # Ensure the PVC is now bounded to the correct PV
 k get pvc alpha-pvc -o wide
@@ -146,7 +146,7 @@ spec:
 
 Then the `alpha-xyz` can be deployed
 
-```sh
+```shell
 k apply -f /root/alpha-xyz.yaml
 ```
 
@@ -157,7 +157,7 @@ Here, there are two services to expose the `alpha-xyz` deployment
 1. A NodePort service
 2. A ClusterIP service name `alpha-svc`
 
-```sh
+```shell
 # ClusterIP Service
 k expose deployment alpha-xyz --port=80 --target-port=80 --name alpha-svc
 # NodePort Service
@@ -180,7 +180,7 @@ ingress:
 # REDACTED
 ```
 
-```sh
+```shell
     k get pods middleware -o wide --show-labels 
 ```
 
@@ -210,7 +210,7 @@ spec:
 
 Once it the  NetworkPolicy get deployed, to verify the policy
 
-```sh
+```shell
   k describe networkpolicies.networking.k8s.io
 ```
 
@@ -218,7 +218,7 @@ Once it the  NetworkPolicy get deployed, to verify the policy
 
 The connectivity can be tested
 
-```sh
+```shell
 # Should be failed
 k exec -it external -- curl alpha-svc
 # Should be success

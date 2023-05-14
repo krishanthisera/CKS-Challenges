@@ -23,7 +23,7 @@ The installation is straightforward, here I have used `Kmod` as the preferred pl
 
 Following installation steps are directly copied from the official falco documentation, it is recommended to refer to the documentation, if you wish to install Falco in your system.
 
-```sh
+```shell
 # Trust the falcosecurity GPG key
 curl -fsSL https://falco.org/repo/falcosecurity-packages.asc | \
   sudo gpg --dearmor -o /usr/share/keyrings/falco-archive-keyring.gpg
