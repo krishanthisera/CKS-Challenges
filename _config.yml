@@ -7,6 +7,10 @@ plugins:
 - jekyll-remote-theme
 - jekyll-feed
 
+jtd:
+  color_scheme: dark
+
+
 # Site settings
 title: KodeKloud CKS Challenge
 description: The challenge series test the skills and understanding of Kubernetes security concepts. The challenges in this series cover a broad range of Kubernetes security topics, including network policies, RBAC, seccomp, AppArmor, and others. 
