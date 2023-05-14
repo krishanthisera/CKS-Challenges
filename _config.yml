@@ -7,8 +7,7 @@ plugins:
 - jekyll-remote-theme
 - jekyll-feed
 
-jtd:
-  color_scheme: dark
+color_scheme: dark
 
 
 # Site settings
@@ -39,7 +38,7 @@ navbar:
     description: "Challenge 03: Focused on kube-bench and CIS benchmark"
   - title: Challenge 04
     url: /challenge-04/
-    description: "This challenge challenges you on Kubernetes security concepts like pod security policies and network security."
+    description: "Challenge 04: Focused on how to analysis/audit suspicious behaviors using, using Falco and Kubernetes auditing."
 
 # Sidebar links
 sidebar:
@@ -56,4 +55,4 @@ sidebar:
         description: "Challenge 03: Focused on kube-bench and CIS benchmark"
       - title: Challenge 04
         url: /challenge-04/
-        description: "This challenge challenges you on Kubernetes security concepts like pod security policies and network security."
+        description: "Challenge 04: Focused on how to analysis/audit suspicious behaviors using, using Falco and Kubernetes auditing"
