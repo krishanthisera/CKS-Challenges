@@ -1,6 +1,6 @@
 # KodeKloud CKS Chalenge 03
 
-![challenge 2](https://user-images.githubusercontent.com/19620378/238107703-2a7f78f5-cc2d-4a65-a7a2-4fb5ed0c4439.png)
+![challenge 3](images/challenge-03.png)
 
 
 ## Before begin

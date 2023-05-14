@@ -1,6 +1,6 @@
 # KodeKloud CKS Challenge 01
 
-![CKS-01](https://user-images.githubusercontent.com/19620378/236825493-83f4bbec-9d74-4c4a-8273-e5e85a6f50b2.png)
+![challenge 1](images/challenge-01.png)
 
 ## Scanning with Trivy  
 

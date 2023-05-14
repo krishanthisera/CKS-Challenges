@@ -1,6 +1,6 @@
 # KodeKloud CKS Challenge 02
 
-![challenge-2](https://user-images.githubusercontent.com/19620378/237099063-d63d5ff8-0c54-4ccd-916f-34abcbf8d85c.png)
+![challenge_2](images/challenge-02.png)
 
 
 ## Securing the Docker image
